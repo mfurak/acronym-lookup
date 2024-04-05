@@ -12,21 +12,26 @@ struct ResultFormat {
     format: OutputFormat,
 }
 
-pub fn run() {
-    let target_acronym = domain::TargetAcronym::new("ap".to_string());
+pub fn run(target_acronym: String) {
+    let target_acronym = domain::TargetAcronym::new(target_acronym);
 
     let fetchers: Vec<Box<dyn fetcher::Fetcher>> = vec![Box::new(fetcher::ConfluenceFetcher::new(
-        "username".to_string(),
-        "api_token".to_string(),
-        "base_url".to_string(),
-        "page_id".to_string(),
+        std::env::var("CONFLUENCE_USER_NAME").unwrap(),
+        std::env::var("CONFLUENCE_API_TOKEN").unwrap(),
+        std::env::var("CONFLUENCE_BASE_URL").unwrap(),
+        std::env::var("CONFLUENCE_PAGE_ID").unwrap(),
     ))];
-    let known_acronyms: Vec<domain::KnownAcronym> = fetchers
+
+    let known_acronyms = fetchers
         .iter()
         .filter_map(|fetcher| fetcher.fetch().ok())
         .flatten()
         .collect();
 
     let res = domain::lookup_acronym(&target_acronym, known_acronyms);
-    println!("{:?}", res);
+    if let Some(results) = res {
+        for result in results {
+            println!("{}", result.acronym.definition);
+        }
+    }
 }
