@@ -7,8 +7,8 @@ enum OutputFormat {
 }
 
 struct ResultFormat {
-    pub numbering: bool,
-    pub format: OutputFormat,
+    numbering: bool,
+    format: OutputFormat,
 }
 
 pub fn run() {

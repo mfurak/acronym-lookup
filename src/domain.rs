@@ -2,8 +2,8 @@ use std::ops;
 
 #[derive(Debug)]
 pub struct KnownAcronym {
-    pub abbreviation: String,
-    pub definition: String,
+    abbreviation: String,
+    definition: String,
 }
 
 impl KnownAcronym {
@@ -25,7 +25,7 @@ impl Clone for KnownAcronym {
 }
 
 pub struct TargetAcronym {
-    pub value: String,
+    value: String,
 }
 
 impl TargetAcronym {
