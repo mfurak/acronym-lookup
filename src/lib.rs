@@ -1,4 +1,5 @@
 mod domain;
+mod fetcher;
 
 enum OutputFormat {
     CLI,
@@ -12,17 +13,20 @@ struct ResultFormat {
 }
 
 pub fn run() {
-    let know_acronyms = vec![
-        domain::KnownAcronym::new(
-            "API".to_string(),
-            "Application Programming Interface".to_string(),
-        ),
-        domain::KnownAcronym::new("CLI".to_string(), "Command Line Interface".to_string()),
-        domain::KnownAcronym::new("GUI".to_string(), "Graphical User Interface".to_string()),
-    ];
-
     let target_acronym = domain::TargetAcronym::new("ap".to_string());
 
-    let res = domain::lookup_acronym(&target_acronym, know_acronyms);
+    let fetchers: Vec<Box<dyn fetcher::Fetcher>> = vec![Box::new(fetcher::ConfluenceFetcher::new(
+        "username".to_string(),
+        "api_token".to_string(),
+        "base_url".to_string(),
+        "page_id".to_string(),
+    ))];
+    let known_acronyms: Vec<domain::KnownAcronym> = fetchers
+        .iter()
+        .filter_map(|fetcher| fetcher.fetch().ok())
+        .flatten()
+        .collect();
+
+    let res = domain::lookup_acronym(&target_acronym, known_acronyms);
     println!("{:?}", res);
 }
