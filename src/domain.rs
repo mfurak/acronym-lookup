@@ -1,5 +1,6 @@
 use std::ops;
 
+#[derive(Debug)]
 pub struct KnownAcronym {
     pub abbreviation: String,
     pub definition: String,
@@ -27,6 +28,15 @@ pub struct TargetAcronym {
     pub value: String,
 }
 
+impl TargetAcronym {
+    pub fn new(value: String) -> Self {
+        TargetAcronym {
+            value: value.to_uppercase(),
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct AcronymResult {
     pub acronym: KnownAcronym,
     pub matched_range: ops::Range<usize>,
@@ -42,9 +52,9 @@ pub fn lookup_acronym(
             let abbreviation = &acronym.abbreviation;
             let value = &target.value;
 
-            if value.contains(abbreviation) {
-                let start = value.find(abbreviation).unwrap();
-                let range = start..(start + abbreviation.len());
+            if abbreviation.contains(value) {
+                let start = abbreviation.find(value).unwrap();
+                let range = start..(start + value.len());
                 let result = AcronymResult {
                     acronym: acronym.clone(),
                     matched_range: range,
