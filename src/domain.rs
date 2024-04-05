@@ -2,15 +2,15 @@ use std::ops;
 
 #[derive(Debug)]
 pub struct KnownAcronym {
-    abbreviation: String,
-    definition: String,
+    pub abbreviation: String,
+    pub definition: String,
 }
 
 impl KnownAcronym {
     pub fn new(abbreviation: String, definition: String) -> Self {
         KnownAcronym {
-            abbreviation: abbreviation.to_uppercase(),
-            definition,
+            abbreviation: abbreviation.trim().to_uppercase(),
+            definition: definition.trim().to_string(),
         }
     }
 }
@@ -31,7 +31,7 @@ pub struct TargetAcronym {
 impl TargetAcronym {
     pub fn new(value: String) -> Self {
         TargetAcronym {
-            value: value.to_uppercase(),
+            value: value.trim().to_uppercase(),
         }
     }
 }
