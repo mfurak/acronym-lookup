@@ -1,6 +1,6 @@
 use clap::ValueEnum;
 
-use crate::domain::AcronymResult;
+use crate::domain::{AcronymResult, TargetAcronym};
 
 const BOLD_START: &str = "\x1B[1m";
 const ITALIC_START: &str = "\x1B[3m";
@@ -19,19 +19,26 @@ pub struct OutputFormat {
 }
 
 impl OutputFormat {
-    pub fn print_output(&self, results: &[AcronymResult]) {
+    pub fn print_output(&self, results: &[AcronymResult], target_acronym: &TargetAcronym) {
         match self.format {
-            OutputStyle::CLI => self.print_cli(results),
+            OutputStyle::CLI => self.print_cli(results, target_acronym),
             OutputStyle::TEXT => self.print_text(results),
             OutputStyle::JSON => self.print_json(results),
         }
     }
 
-    fn print_cli(&self, results: &[AcronymResult]) {
+    fn print_cli(&self, results: &[AcronymResult], target_acronym: &TargetAcronym) {
         for result in results {
+            let formatted_acronym = format!("{BOLD_START}{}{TEXT_END}", target_acronym.value);
+            let formatted_acronym = result
+                .acronym
+                .abbreviation
+                .replace(&target_acronym.value, &formatted_acronym);
+            let formatted_definition =
+                format!("{ITALIC_START}{}{TEXT_END}", result.acronym.definition);
             println!(
-                "{BOLD_START}{}{TEXT_END} - {ITALIC_START}{}{TEXT_END}",
-                result.acronym.abbreviation, result.acronym.definition
+                "{} - {ITALIC_START}{}{TEXT_END}",
+                formatted_acronym, formatted_definition
             )
         }
     }

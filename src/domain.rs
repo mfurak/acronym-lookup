@@ -1,6 +1,5 @@
 use serde::ser::SerializeStruct;
 use serde::Serialize;
-use std::ops;
 
 #[derive(Clone, Debug)]
 pub struct KnownAcronym {
@@ -18,7 +17,7 @@ impl KnownAcronym {
 }
 
 pub struct TargetAcronym {
-    value: String,
+    pub value: String,
 }
 
 impl TargetAcronym {
@@ -32,7 +31,6 @@ impl TargetAcronym {
 #[derive(Debug)]
 pub struct AcronymResult {
     pub acronym: KnownAcronym,
-    pub matched_range: ops::Range<usize>,
 }
 
 impl Serialize for AcronymResult {
@@ -62,7 +60,6 @@ pub fn lookup_acronym(
                 let range = start..(start + target_value.len());
                 let result = AcronymResult {
                     acronym: acronym.clone(),
-                    matched_range: range,
                 };
                 return Some(result);
             }

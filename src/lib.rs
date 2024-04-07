@@ -40,7 +40,7 @@ pub fn run(config: &Cli) {
                 format: cli_format,
             };
 
-            output_format.print_output(&results);
+            output_format.print_output(&results, &target_acronym);
         }
         None => println!("404 - No acronyms found. :("),
     }
