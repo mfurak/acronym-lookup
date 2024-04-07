@@ -2,8 +2,22 @@ mod domain;
 mod fetcher;
 mod output;
 
-pub fn run(target_acronym: &str) {
-    let target_acronym = domain::TargetAcronym::new(target_acronym);
+#[derive(clap::Parser)]
+#[command(version, about, long_about = None)]
+pub struct Cli {
+    acronym: String,
+    #[arg(short, long, value_enum)]
+    format: Option<output::OutputStyle>,
+}
+
+pub fn run(config: &Cli) {
+    let cli_acronym = config.acronym.clone();
+    let cli_format = match config.format {
+        Some(format) => format,
+        None => output::OutputStyle::CLI,
+    };
+
+    let target_acronym = domain::TargetAcronym::new(&cli_acronym);
 
     let fetchers: Vec<Box<dyn fetcher::Fetcher>> = vec![Box::new(fetcher::ConfluenceFetcher::new(
         std::env::var("CONFLUENCE_USER_NAME").unwrap(),
@@ -19,12 +33,15 @@ pub fn run(target_acronym: &str) {
         .collect();
 
     let res = domain::lookup_acronym(&target_acronym, known_acronyms);
-    if let Some(results) = res {
-        let output_format = output::OutputFormat {
-            numbering: false,
-            format: output::OutputStyle::CLI,
-        };
+    match res {
+        Some(results) => {
+            let output_format = output::OutputFormat {
+                numbering: false,
+                format: cli_format,
+            };
 
-        output_format.print_output(&results);
+            output_format.print_output(&results);
+        }
+        None => println!("404 - No acronyms found. :("),
     }
 }

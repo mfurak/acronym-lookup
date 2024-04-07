@@ -1,8 +1,7 @@
-use acronym_lookup::run;
+use acronym_lookup::{run, Cli};
+use clap::Parser;
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
-    let acronym_string = args.get(1).unwrap();
-
-    run(acronym_string);
+    let cli = Cli::parse();
+    run(&cli);
 }

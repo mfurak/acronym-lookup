@@ -1,9 +1,12 @@
+use clap::ValueEnum;
+
 use crate::domain::AcronymResult;
 
 const BOLD_START: &str = "\x1B[1m";
 const ITALIC_START: &str = "\x1B[3m";
 const TEXT_END: &str = "\x1B[0m";
 
+#[derive(Clone, Copy, ValueEnum)]
 pub enum OutputStyle {
     CLI,
     TEXT,
