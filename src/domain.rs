@@ -2,7 +2,7 @@ use serde::ser::SerializeStruct;
 use serde::Serialize;
 use std::ops;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct KnownAcronym {
     pub abbreviation: String,
     pub definition: String,
@@ -13,15 +13,6 @@ impl KnownAcronym {
         KnownAcronym {
             abbreviation: abbreviation.trim().to_uppercase(),
             definition: definition.trim().to_string(),
-        }
-    }
-}
-
-impl Clone for KnownAcronym {
-    fn clone(&self) -> Self {
-        KnownAcronym {
-            abbreviation: self.abbreviation.clone(),
-            definition: self.definition.clone(),
         }
     }
 }
