@@ -1,3 +1,5 @@
+use serde::ser::SerializeStruct;
+use serde::Serialize;
 use std::ops;
 
 #[derive(Debug)]
@@ -40,6 +42,18 @@ impl TargetAcronym {
 pub struct AcronymResult {
     pub acronym: KnownAcronym,
     pub matched_range: ops::Range<usize>,
+}
+
+impl Serialize for AcronymResult {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut result = serializer.serialize_struct("", 2)?;
+        result.serialize_field("Acronym", &self.acronym.abbreviation)?;
+        result.serialize_field("Definition", &self.acronym.definition)?;
+        result.end()
+    }
 }
 
 pub fn lookup_acronym(

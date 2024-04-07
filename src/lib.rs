@@ -1,16 +1,6 @@
 mod domain;
 mod fetcher;
-
-enum OutputFormat {
-    CLI,
-    TEXT,
-    JSON,
-}
-
-struct ResultFormat {
-    numbering: bool,
-    format: OutputFormat,
-}
+mod output;
 
 pub fn run(target_acronym: &str) {
     let target_acronym = domain::TargetAcronym::new(target_acronym);
@@ -30,8 +20,11 @@ pub fn run(target_acronym: &str) {
 
     let res = domain::lookup_acronym(&target_acronym, known_acronyms);
     if let Some(results) = res {
-        for result in results {
-            println!("{}", result.acronym.definition);
-        }
+        let output_format = output::OutputFormat {
+            numbering: false,
+            format: output::OutputStyle::CLI,
+        };
+
+        output_format.print_output(&results);
     }
 }
