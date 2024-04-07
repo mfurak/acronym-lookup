@@ -2,6 +2,8 @@ use crate::domain::{self, KnownAcronym};
 use scraper::{Html, Selector};
 use std::error::Error;
 
+const HYPHENS: [&str; 3] = [" – ", " - ", " — "];
+
 pub trait Fetcher {
     fn fetch(&self) -> Result<Vec<domain::KnownAcronym>, Box<dyn Error>>;
 }
@@ -49,8 +51,7 @@ impl Fetcher for ConfluenceFetcher {
             .select(&selector)
             .filter_map(|element| {
                 let text = element.text().collect::<String>();
-                let hyphens = [" – ", " - ", " — "];
-                let splits: Vec<Vec<&str>> = hyphens
+                let splits: Vec<Vec<&str>> = HYPHENS
                     .iter()
                     .filter_map(|hyphen| {
                         if !text.contains(hyphen) {
@@ -60,12 +61,10 @@ impl Fetcher for ConfluenceFetcher {
                         return Some(parts);
                     })
                     .collect();
+                // splits will only have a single value depending on which hyphen it matched
                 if splits.len() == 1 {
                     let parts = splits.first().unwrap();
-                    Some(domain::KnownAcronym::new(
-                        parts[0].to_string(),
-                        parts[1].to_string(),
-                    ))
+                    Some(domain::KnownAcronym::new(parts[0], parts[1]))
                 } else {
                     None
                 }

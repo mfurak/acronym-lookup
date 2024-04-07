@@ -7,7 +7,7 @@ pub struct KnownAcronym {
 }
 
 impl KnownAcronym {
-    pub fn new(abbreviation: String, definition: String) -> Self {
+    pub fn new(abbreviation: &str, definition: &str) -> Self {
         KnownAcronym {
             abbreviation: abbreviation.trim().to_uppercase(),
             definition: definition.trim().to_string(),
@@ -29,7 +29,7 @@ pub struct TargetAcronym {
 }
 
 impl TargetAcronym {
-    pub fn new(value: String) -> Self {
+    pub fn new(value: &str) -> Self {
         TargetAcronym {
             value: value.trim().to_uppercase(),
         }
@@ -50,11 +50,11 @@ pub fn lookup_acronym(
         .iter()
         .filter_map(|acronym| {
             let abbreviation = &acronym.abbreviation;
-            let value = &target.value;
+            let target_value = &target.value;
 
-            if abbreviation.contains(value) {
-                let start = abbreviation.find(value).unwrap();
-                let range = start..(start + value.len());
+            if abbreviation.contains(target_value) {
+                let start = abbreviation.find(target_value).unwrap();
+                let range = start..(start + target_value.len());
                 let result = AcronymResult {
                     acronym: acronym.clone(),
                     matched_range: range,

@@ -12,7 +12,7 @@ struct ResultFormat {
     format: OutputFormat,
 }
 
-pub fn run(target_acronym: String) {
+pub fn run(target_acronym: &str) {
     let target_acronym = domain::TargetAcronym::new(target_acronym);
 
     let fetchers: Vec<Box<dyn fetcher::Fetcher>> = vec![Box::new(fetcher::ConfluenceFetcher::new(
