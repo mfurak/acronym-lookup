@@ -56,12 +56,9 @@ pub fn lookup_acronym(
             let target_value = &target.value;
 
             if abbreviation.contains(target_value) {
-                let start = abbreviation.find(target_value).unwrap();
-                let range = start..(start + target_value.len());
-                let result = AcronymResult {
+                return Some(AcronymResult {
                     acronym: acronym.clone(),
-                };
-                return Some(result);
+                });
             }
             return None;
         })
