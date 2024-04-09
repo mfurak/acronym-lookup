@@ -16,13 +16,13 @@ pub struct Cli {
 }
 
 pub fn run(config: &Cli) {
-    let cli_acronym = config.acronym.clone();
+    let cli_acronym = &config.acronym;
     let cli_format = match config.format {
         Some(format) => format,
         None => OutputStyle::CLI,
     };
 
-    let target_acronym = TargetAcronym::new(&cli_acronym);
+    let target_acronym = TargetAcronym::new(cli_acronym);
 
     let fetchers: Vec<Box<dyn Fetcher>> = vec![Box::new(ConfluenceFetcher::new(
         env::var("CONFLUENCE_USER_NAME").unwrap(),
