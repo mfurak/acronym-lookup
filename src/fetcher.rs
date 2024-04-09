@@ -1,11 +1,10 @@
-use crate::domain::{self, KnownAcronym};
-use scraper::{Html, Selector};
-use std::error::Error;
+use crate::domain::KnownAcronym;
+use std::error;
 
 const HYPHENS: [&str; 3] = [" – ", " - ", " — "];
 
 pub trait Fetcher {
-    fn fetch(&self) -> Result<Vec<domain::KnownAcronym>, Box<dyn Error>>;
+    fn fetch(&self) -> Result<Vec<KnownAcronym>, Box<dyn error::Error>>;
 }
 
 struct ConfluenceFetcherConfig {
@@ -33,7 +32,7 @@ impl ConfluenceFetcher {
 }
 
 impl Fetcher for ConfluenceFetcher {
-    fn fetch(&self) -> Result<Vec<domain::KnownAcronym>, Box<dyn Error>> {
+    fn fetch(&self) -> Result<Vec<KnownAcronym>, Box<dyn error::Error>> {
         let client = reqwest::blocking::Client::new();
         let url = format!(
             "{}/wiki/api/v2/pages/{}?body-format=view",
@@ -45,12 +44,12 @@ impl Fetcher for ConfluenceFetcher {
             .send()?;
         let json_body = response.json::<serde_json::Value>()?;
         let text_content = json_body["body"]["view"]["value"].as_str().unwrap();
-        let parsed_html = Html::parse_fragment(text_content);
-        let selector = Selector::parse("p").unwrap();
+        let parsed_html = scraper::Html::parse_fragment(text_content);
+        let selector = scraper::Selector::parse("p").unwrap();
         let known_acronyms = parsed_html
             .select(&selector)
             .filter_map(|element| {
-                let text = element.text().collect::<String>();
+                let text: String = element.text().collect();
                 let splits: Vec<Vec<&str>> = HYPHENS
                     .iter()
                     .filter_map(|hyphen| {
@@ -64,7 +63,7 @@ impl Fetcher for ConfluenceFetcher {
                 // splits will only have a single value depending on which hyphen it matched
                 if splits.len() == 1 {
                     let parts = splits.first().unwrap();
-                    Some(domain::KnownAcronym::new(parts[0], parts[1]))
+                    Some(KnownAcronym::new(parts[0], parts[1]))
                 } else {
                     None
                 }

@@ -1,5 +1,4 @@
 use serde::ser::SerializeStruct;
-use serde::Serialize;
 
 #[derive(Clone, Debug)]
 pub struct KnownAcronym {
@@ -33,7 +32,7 @@ pub struct AcronymResult {
     pub acronym: KnownAcronym,
 }
 
-impl Serialize for AcronymResult {
+impl serde::Serialize for AcronymResult {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,

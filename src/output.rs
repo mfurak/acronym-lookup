@@ -1,6 +1,5 @@
-use clap::ValueEnum;
-
 use crate::domain::{AcronymResult, TargetAcronym};
+use clap::ValueEnum;
 
 const BOLD_START: &str = "\x1B[1m";
 const ITALIC_START: &str = "\x1B[3m";
