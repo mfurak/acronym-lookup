@@ -53,6 +53,6 @@ impl OutputFormat {
 
     fn print_json(&self, results: &[AcronymResult]) {
         let output = serde_json::to_string(results).unwrap_or("Something went wrong".to_string());
-        println!("{}", output);
+        println!("{output}");
     }
 }
