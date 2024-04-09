@@ -1,10 +1,17 @@
 use crate::domain::KnownAcronym;
-use std::error;
 
 const HYPHENS: [&str; 3] = [" – ", " - ", " — "];
 
 pub trait Fetcher {
-    fn fetch(&self) -> Result<Vec<KnownAcronym>, Box<dyn error::Error>>;
+    fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError>;
+}
+
+pub struct FetcherError {}
+
+impl From<reqwest::Error> for FetcherError {
+    fn from(_: reqwest::Error) -> Self {
+        FetcherError {}
+    }
 }
 
 struct ConfluenceFetcherConfig {
@@ -32,7 +39,7 @@ impl ConfluenceFetcher {
 }
 
 impl Fetcher for ConfluenceFetcher {
-    fn fetch(&self) -> Result<Vec<KnownAcronym>, Box<dyn error::Error>> {
+    fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError> {
         let client = reqwest::blocking::Client::new();
         let url = format!(
             "{}/wiki/api/v2/pages/{}?body-format=view",
