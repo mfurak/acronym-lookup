@@ -1,11 +1,10 @@
 use crate::domain::{AcronymResult, TargetAcronym};
-use clap::ValueEnum;
 
 const BOLD_START: &str = "\x1B[1m";
 const ITALIC_START: &str = "\x1B[3m";
 const TEXT_END: &str = "\x1B[0m";
 
-#[derive(Clone, Copy, ValueEnum)]
+#[derive(Clone, Copy, clap::ValueEnum)]
 pub enum OutputStyle {
     CLI,
     TEXT,

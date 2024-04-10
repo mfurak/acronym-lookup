@@ -1,7 +1,6 @@
 use domain::{lookup_acronym, TargetAcronym};
 use fetcher::{ConfluenceFetcher, Fetcher};
 use output::{OutputFormat, OutputStyle};
-use std::env;
 
 mod domain;
 mod fetcher;
@@ -25,10 +24,10 @@ pub fn run(config: &Cli) {
     let target_acronym = TargetAcronym::new(cli_acronym);
 
     let fetchers: Vec<Box<dyn Fetcher>> = vec![Box::new(ConfluenceFetcher::new(
-        env::var("CONFLUENCE_USER_NAME").unwrap(),
-        env::var("CONFLUENCE_API_TOKEN").unwrap(),
-        env::var("CONFLUENCE_BASE_URL").unwrap(),
-        env::var("CONFLUENCE_PAGE_ID").unwrap(),
+        std::env::var("CONFLUENCE_USER_NAME").unwrap(),
+        std::env::var("CONFLUENCE_API_TOKEN").unwrap(),
+        std::env::var("CONFLUENCE_BASE_URL").unwrap(),
+        std::env::var("CONFLUENCE_PAGE_ID").unwrap(),
     ))];
 
     let known_acronyms = fetchers
