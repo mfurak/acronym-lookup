@@ -2,7 +2,7 @@ use crate::domain::KnownAcronym;
 
 const HYPHENS: [&str; 3] = [" – ", " - ", " — "];
 
-pub trait Fetcher {
+pub trait Fetcher: Send + Sync {
     fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError>;
 }
 
