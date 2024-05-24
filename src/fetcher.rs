@@ -80,3 +80,25 @@ impl Fetcher for ConfluenceFetcher {
         return Ok(known_acronyms);
     }
 }
+
+struct FileFetcherConfig {
+    file_path: String,
+}
+
+struct FileFetcher {
+    config: FileFetcherConfig,
+}
+
+impl FileFetcher {
+    fn new(file_path: String) -> Self {
+        FileFetcher {
+            config: FileFetcherConfig { file_path },
+        }
+    }
+}
+
+impl Fetcher for FileFetcher {
+    fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError> {
+        todo!()
+    }
+}
