@@ -1,4 +1,5 @@
 use crate::domain::KnownAcronym;
+use std::{fs, io};
 
 const HYPHENS: [&str; 3] = [" – ", " - ", " — "];
 
@@ -10,6 +11,12 @@ pub struct FetcherError {}
 
 impl From<reqwest::Error> for FetcherError {
     fn from(_: reqwest::Error) -> Self {
+        FetcherError {}
+    }
+}
+
+impl From<io::Error> for FetcherError {
+    fn from(_: io::Error) -> Self {
         FetcherError {}
     }
 }
@@ -78,5 +85,49 @@ impl Fetcher for ConfluenceFetcher {
             .collect::<Vec<KnownAcronym>>();
 
         return Ok(known_acronyms);
+    }
+}
+
+struct FileFetcherConfig {
+    file_path: String,
+}
+
+pub struct FileFetcher {
+    config: FileFetcherConfig,
+}
+
+impl FileFetcher {
+    pub fn new(file_path: String) -> Self {
+        FileFetcher {
+            config: FileFetcherConfig { file_path },
+        }
+    }
+}
+
+impl Fetcher for FileFetcher {
+    fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError> {
+        let results = fs::read_to_string(&self.config.file_path)?
+            .lines()
+            .filter_map(|line| {
+                let splits: Vec<Vec<&str>> = HYPHENS
+                    .iter()
+                    .filter_map(|hyphen| {
+                        if !line.contains(hyphen) {
+                            return None;
+                        }
+                        let parts = line.splitn(2, hyphen).collect::<Vec<&str>>();
+                        return Some(parts);
+                    })
+                    .collect();
+                // splits will only have a single value depending on which hyphen it matched
+                if splits.len() == 1 {
+                    let parts = splits.first().unwrap();
+                    Some(KnownAcronym::new(parts[0], parts[1]))
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<KnownAcronym>>();
+        Ok(results)
     }
 }
