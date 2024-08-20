@@ -62,26 +62,8 @@ impl Fetcher for ConfluenceFetcher {
         let selector = scraper::Selector::parse("p").unwrap();
         let known_acronyms = parsed_html
             .select(&selector)
-            .filter_map(|element| {
-                let text: String = element.text().collect();
-                let splits: Vec<Vec<&str>> = HYPHENS
-                    .iter()
-                    .filter_map(|hyphen| {
-                        if !text.contains(hyphen) {
-                            return None;
-                        }
-                        let parts = text.splitn(2, hyphen).collect::<Vec<&str>>();
-                        return Some(parts);
-                    })
-                    .collect();
-                // splits will only have a single value depending on which hyphen it matched
-                if splits.len() == 1 {
-                    let parts = splits.first().unwrap();
-                    Some(KnownAcronym::new(parts[0], parts[1]))
-                } else {
-                    None
-                }
-            })
+            .map(|element| element.text().collect::<String>())
+            .filter_map(|text| parse_acronym(&text))
             .collect::<Vec<KnownAcronym>>();
 
         return Ok(known_acronyms);
@@ -108,26 +90,29 @@ impl Fetcher for FileFetcher {
     fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError> {
         let results = fs::read_to_string(&self.config.file_path)?
             .lines()
-            .filter_map(|line| {
-                let splits: Vec<Vec<&str>> = HYPHENS
-                    .iter()
-                    .filter_map(|hyphen| {
-                        if !line.contains(hyphen) {
-                            return None;
-                        }
-                        let parts = line.splitn(2, hyphen).collect::<Vec<&str>>();
-                        return Some(parts);
-                    })
-                    .collect();
-                // splits will only have a single value depending on which hyphen it matched
-                if splits.len() == 1 {
-                    let parts = splits.first().unwrap();
-                    Some(KnownAcronym::new(parts[0], parts[1]))
-                } else {
-                    None
-                }
-            })
+            .filter(|line| !line.is_empty())
+            .filter_map(parse_acronym)
             .collect::<Vec<KnownAcronym>>();
         Ok(results)
+    }
+}
+
+fn parse_acronym(line: &str) -> Option<KnownAcronym> {
+    let splits: Vec<Vec<&str>> = HYPHENS
+        .iter()
+        .filter_map(|hyphen| {
+            if !line.contains(hyphen) {
+                return None;
+            }
+            let parts = line.splitn(2, hyphen).collect::<Vec<&str>>();
+            return Some(parts);
+        })
+        .collect();
+    // splits will only have a single value depending on which hyphen it matched
+    if splits.len() == 1 {
+        let parts = splits.first().unwrap();
+        Some(KnownAcronym::new(parts[0], parts[1]))
+    } else {
+        None
     }
 }
