@@ -1,5 +1,5 @@
 use domain::{lookup_acronym, KnownAcronym, TargetAcronym};
-use fetcher::{ConfluenceFetcher, Fetcher};
+use fetcher::{ConfluenceFetcher, Fetcher, FileFetcher};
 use output::{OutputFormat, OutputStyle};
 use std::{
     sync::Arc,
@@ -27,13 +27,19 @@ pub fn run(config: &Cli) {
 
     let target_acronym = TargetAcronym::new(cli_acronym);
 
-    let fetchers: Vec<Arc<Box<dyn Fetcher + Sync>>> =
+    let mut fetchers: Vec<Arc<Box<dyn Fetcher + Sync>>> =
         vec![Arc::new(Box::new(ConfluenceFetcher::new(
-            std::env::var("CONFLUENCE_USER_NAME").unwrap(),
-            std::env::var("CONFLUENCE_API_TOKEN").unwrap(),
-            std::env::var("CONFLUENCE_BASE_URL").unwrap(),
-            std::env::var("CONFLUENCE_PAGE_ID").unwrap(),
+            std::env::var("AL_CONFLUENCE_USER_NAME").unwrap(),
+            std::env::var("AL_CONFLUENCE_API_TOKEN").unwrap(),
+            std::env::var("AL_CONFLUENCE_BASE_URL").unwrap(),
+            std::env::var("AL_CONFLUENCE_PAGE_ID").unwrap(),
         )))];
+
+    if std::env::var("AL_FILE_PATHS").is_ok() {
+        fetchers.push(Arc::new(Box::new(FileFetcher::new(
+            std::env::var("AL_FILE_PATHS").unwrap(),
+        ))));
+    }
 
     let handles = fetchers
         .iter()
