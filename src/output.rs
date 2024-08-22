@@ -12,7 +12,6 @@ pub enum OutputStyle {
 }
 
 pub struct OutputFormat {
-    pub numbering: bool,
     pub format: OutputStyle,
 }
 

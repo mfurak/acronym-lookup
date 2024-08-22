@@ -58,10 +58,7 @@ pub fn run(config: &Cli) {
     let res = lookup_acronym(&target_acronym, known_acronyms);
     match res {
         Some(results) => {
-            let output_format = OutputFormat {
-                numbering: false,
-                format: cli_format,
-            };
+            let output_format = OutputFormat { format: cli_format };
 
             output_format.print_output(&results, &target_acronym);
         }
