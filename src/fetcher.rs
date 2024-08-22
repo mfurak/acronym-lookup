@@ -71,7 +71,7 @@ impl Fetcher for ConfluenceFetcher {
 }
 
 struct FileFetcherConfig {
-    file_path: String,
+    file_paths: Vec<String>,
 }
 
 pub struct FileFetcher {
@@ -79,19 +79,35 @@ pub struct FileFetcher {
 }
 
 impl FileFetcher {
-    pub fn new(file_path: String) -> Self {
+    pub fn new(file_paths: String) -> Self {
         FileFetcher {
-            config: FileFetcherConfig { file_path },
+            config: FileFetcherConfig {
+                file_paths: file_paths.split(",").map(|path| path.to_owned()).collect(),
+            },
         }
     }
 }
 
 impl Fetcher for FileFetcher {
     fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError> {
-        let results = fs::read_to_string(&self.config.file_path)?
-            .lines()
-            .filter(|line| !line.is_empty())
-            .filter_map(parse_acronym)
+        let results = self
+            .config
+            .file_paths
+            .iter()
+            .filter_map(|file_path| {
+                if let Ok(file_content) = fs::read_to_string(&file_path) {
+                    Some(
+                        file_content
+                            .lines()
+                            .filter(|line| !line.is_empty())
+                            .filter_map(parse_acronym)
+                            .collect::<Vec<KnownAcronym>>(),
+                    )
+                } else {
+                    None
+                }
+            })
+            .flatten()
             .collect::<Vec<KnownAcronym>>();
         Ok(results)
     }
