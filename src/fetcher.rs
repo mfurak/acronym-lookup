@@ -82,7 +82,16 @@ impl FileFetcher {
     pub fn new(file_paths: String) -> Self {
         FileFetcher {
             config: FileFetcherConfig {
-                file_paths: file_paths.split(",").map(|path| path.to_owned()).collect(),
+                file_paths: file_paths
+                    .split(",")
+                    .filter_map(|path| {
+                        if path.is_empty() {
+                            None
+                        } else {
+                            Some(path.to_owned())
+                        }
+                    })
+                    .collect(),
             },
         }
     }
