@@ -91,7 +91,7 @@ impl Fetcher for FileFetcher {
         let file_content = fs::read_to_string(&self.config.file_path)?;
         Ok(file_content
             .lines()
-            .filter(|line| !line.is_empty())
+            .filter(|line| !line.trim().is_empty())
             .filter_map(parse_acronym)
             .collect::<Vec<KnownAcronym>>())
     }
