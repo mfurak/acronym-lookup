@@ -19,19 +19,21 @@ pub fn run(cli_parameters: &CliParameters) {
         None => OutputStyle::CLI,
     };
 
+    let env_parameters = config::EnvParameters::load();
+
     let target_acronym = TargetAcronym::new(cli_acronym);
 
     let mut fetchers: Vec<Arc<Box<dyn Fetcher + Sync>>> =
         vec![Arc::new(Box::new(ConfluenceFetcher::new(
-            std::env::var("AL_CONFLUENCE_USER_NAME").unwrap(),
-            std::env::var("AL_CONFLUENCE_API_TOKEN").unwrap(),
-            std::env::var("AL_CONFLUENCE_BASE_URL").unwrap(),
-            std::env::var("AL_CONFLUENCE_PAGE_ID").unwrap(),
+            env_parameters.confluence.user_name.clone(),
+            env_parameters.confluence.api_token.clone(),
+            env_parameters.confluence.base_url.clone(),
+            env_parameters.confluence.page_id.clone(),
         )))];
 
-    if std::env::var("AL_FILE_PATHS").is_ok() {
+    if env_parameters.file_paths.is_some() {
         fetchers.push(Arc::new(Box::new(FileFetcher::new(
-            std::env::var("AL_FILE_PATHS").unwrap(),
+            env_parameters.file_paths.unwrap(),
         ))));
     }
 
