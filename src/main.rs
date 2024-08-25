@@ -1,4 +1,4 @@
-use acronym_lookup::{run, CliParameters};
+use acronym_lookup::{config::CliParameters, run};
 use clap::Parser;
 
 fn main() {

@@ -1,3 +1,4 @@
+use config::CliParameters;
 use domain::{lookup_acronym, KnownAcronym, TargetAcronym};
 use fetcher::{ConfluenceFetcher, Fetcher, FileFetcher};
 use output::{OutputFormat, OutputStyle};
@@ -6,17 +7,10 @@ use std::{
     thread::{self, JoinHandle},
 };
 
+pub mod config;
 mod domain;
 mod fetcher;
 mod output;
-
-#[derive(clap::Parser)]
-#[command(version, about, long_about = None)]
-pub struct CliParameters {
-    acronym: String,
-    #[arg(short, long, value_enum)]
-    format: Option<OutputStyle>,
-}
 
 pub fn run(cli_parameters: &CliParameters) {
     let cli_acronym = &cli_parameters.acronym;
