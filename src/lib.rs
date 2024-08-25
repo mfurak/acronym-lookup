@@ -32,9 +32,13 @@ pub fn run(cli_parameters: &CliParameters) {
         )))];
 
     if env_parameters.file_paths.is_some() {
-        fetchers.push(Arc::new(Box::new(FileFetcher::new(
-            env_parameters.file_paths.unwrap(),
-        ))));
+        env_parameters
+            .file_paths
+            .unwrap()
+            .iter()
+            .for_each(|file_path| {
+                fetchers.push(Arc::new(Box::new(FileFetcher::new(file_path.clone()))))
+            })
     }
 
     let handles = fetchers

@@ -71,7 +71,7 @@ impl Fetcher for ConfluenceFetcher {
 }
 
 struct FileFetcherConfig {
-    file_paths: Vec<String>,
+    file_path: String,
 }
 
 pub struct FileFetcher {
@@ -79,46 +79,21 @@ pub struct FileFetcher {
 }
 
 impl FileFetcher {
-    pub fn new(file_paths: String) -> Self {
+    pub fn new(file_path: String) -> Self {
         FileFetcher {
-            config: FileFetcherConfig {
-                file_paths: file_paths
-                    .split(",")
-                    .filter_map(|path| {
-                        if path.is_empty() {
-                            None
-                        } else {
-                            Some(path.to_owned())
-                        }
-                    })
-                    .collect(),
-            },
+            config: FileFetcherConfig { file_path },
         }
     }
 }
 
 impl Fetcher for FileFetcher {
     fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError> {
-        let results = self
-            .config
-            .file_paths
-            .iter()
-            .filter_map(|file_path| {
-                if let Ok(file_content) = fs::read_to_string(&file_path) {
-                    Some(
-                        file_content
-                            .lines()
-                            .filter(|line| !line.is_empty())
-                            .filter_map(parse_acronym)
-                            .collect::<Vec<KnownAcronym>>(),
-                    )
-                } else {
-                    None
-                }
-            })
-            .flatten()
-            .collect::<Vec<KnownAcronym>>();
-        Ok(results)
+        let file_content = fs::read_to_string(&self.config.file_path)?;
+        Ok(file_content
+            .lines()
+            .filter(|line| !line.is_empty())
+            .filter_map(parse_acronym)
+            .collect::<Vec<KnownAcronym>>())
     }
 }
 

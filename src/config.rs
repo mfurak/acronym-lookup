@@ -17,7 +17,7 @@ pub struct ConfluenceEnvParameters {
 
 pub struct EnvParameters {
     pub confluence: ConfluenceEnvParameters,
-    pub file_paths: Option<String>,
+    pub file_paths: Option<Vec<String>>,
 }
 
 impl EnvParameters {
@@ -36,7 +36,18 @@ impl EnvParameters {
             file_paths: match std::env::var("AL_FILE_PATHS") {
                 Ok(file_paths) => {
                     if !file_paths.trim().is_empty() {
-                        Some(file_paths)
+                        Some(
+                            file_paths
+                                .split(',')
+                                .filter_map(|s| {
+                                    if !s.trim().is_empty() {
+                                        Some(s.to_owned())
+                                    } else {
+                                        None
+                                    }
+                                })
+                                .collect::<Vec<String>>(),
+                        )
                     } else {
                         None
                     }
