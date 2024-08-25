@@ -2,7 +2,7 @@
 name = "acronym-lookup"
 description = "Blazingly fast CLI tool for looking up acronyms"
 authors = ["mfurak"]
-version = "0.16.0"
+version = "0.17.0"
 edition = "2021"
 
 [[bin]]

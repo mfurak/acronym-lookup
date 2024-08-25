@@ -52,7 +52,8 @@ pub fn run(cli_parameters: &CliParameters) {
 
     let known_acronyms = handles
         .into_iter()
-        .flat_map(|handle| handle.join().unwrap().unwrap())
+        .filter_map(|handle| handle.join().unwrap())
+        .flatten()
         .collect::<Vec<KnownAcronym>>();
 
     let res = lookup_acronym(&target_acronym, known_acronyms);
