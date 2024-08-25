@@ -12,15 +12,15 @@ mod output;
 
 #[derive(clap::Parser)]
 #[command(version, about, long_about = None)]
-pub struct Cli {
+pub struct CliParameters {
     acronym: String,
     #[arg(short, long, value_enum)]
     format: Option<OutputStyle>,
 }
 
-pub fn run(config: &Cli) {
-    let cli_acronym = &config.acronym;
-    let cli_format = match config.format {
+pub fn run(cli_parameters: &CliParameters) {
+    let cli_acronym = &cli_parameters.acronym;
+    let cli_format = match cli_parameters.format {
         Some(format) => format,
         None => OutputStyle::CLI,
     };

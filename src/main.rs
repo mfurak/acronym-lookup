@@ -1,7 +1,7 @@
-use acronym_lookup::{run, Cli};
+use acronym_lookup::{run, CliParameters};
 use clap::Parser;
 
 fn main() {
-    let cli = Cli::parse();
+    let cli = CliParameters::parse();
     run(&cli);
 }
