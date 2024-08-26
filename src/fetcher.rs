@@ -1,7 +1,7 @@
 use crate::domain::KnownAcronym;
 use std::{fs, io};
 
-const HYPHENS: [&str; 3] = [" – ", " - ", " — "];
+const SEPARATORS: [&str; 4] = [" – ", " - ", " — ", " : "];
 
 pub trait Fetcher: Send + Sync {
     fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError>;
@@ -98,13 +98,13 @@ impl Fetcher for FileFetcher {
 }
 
 fn parse_acronym(line: &str) -> Option<KnownAcronym> {
-    let splits: Vec<Vec<&str>> = HYPHENS
+    let splits: Vec<Vec<&str>> = SEPARATORS
         .iter()
-        .filter_map(|hyphen| {
-            if !line.contains(hyphen) {
+        .filter_map(|separator| {
+            if !line.contains(separator) {
                 return None;
             }
-            let parts = line.splitn(2, hyphen).collect::<Vec<&str>>();
+            let parts = line.splitn(2, separator).collect::<Vec<&str>>();
             return Some(parts);
         })
         .collect();
