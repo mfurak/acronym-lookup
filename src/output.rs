@@ -6,9 +6,9 @@ const TEXT_END: &str = "\x1B[0m";
 
 #[derive(Clone, Copy, clap::ValueEnum)]
 pub enum OutputStyle {
-    CLI,
-    TEXT,
-    JSON,
+    Cli,
+    Text,
+    Json,
 }
 
 pub struct OutputFormat {
@@ -18,9 +18,9 @@ pub struct OutputFormat {
 impl OutputFormat {
     pub fn print_output(&self, results: &[AcronymResult], target_acronym: &TargetAcronym) {
         match self.format {
-            OutputStyle::CLI => self.print_cli(results, target_acronym),
-            OutputStyle::TEXT => self.print_text(results),
-            OutputStyle::JSON => self.print_json(results),
+            OutputStyle::Cli => self.print_cli(results, target_acronym),
+            OutputStyle::Text => self.print_text(results),
+            OutputStyle::Json => self.print_json(results),
         }
     }
 

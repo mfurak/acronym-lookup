@@ -16,7 +16,7 @@ pub fn run(cli_parameters: &CliParameters) {
     let cli_acronym = &cli_parameters.acronym;
     let cli_format = match cli_parameters.format {
         Some(format) => format,
-        None => OutputStyle::CLI,
+        None => OutputStyle::Cli,
     };
 
     let env_parameters = config::EnvParameters::load();
@@ -45,8 +45,7 @@ pub fn run(cli_parameters: &CliParameters) {
         .iter()
         .map(|fetcher| {
             let thread_fetcher = Arc::clone(fetcher);
-            let handle = thread::spawn(move || thread_fetcher.fetch().ok());
-            handle
+            thread::spawn(move || thread_fetcher.fetch().ok())
         })
         .collect::<Vec<JoinHandle<Option<Vec<KnownAcronym>>>>>();
 

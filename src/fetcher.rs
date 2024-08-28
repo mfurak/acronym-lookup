@@ -66,7 +66,7 @@ impl Fetcher for ConfluenceFetcher {
             .filter_map(|text| parse_acronym(&text))
             .collect::<Vec<KnownAcronym>>();
 
-        return Ok(known_acronyms);
+        Ok(known_acronyms)
     }
 }
 
@@ -102,10 +102,11 @@ fn parse_acronym(line: &str) -> Option<KnownAcronym> {
         .iter()
         .filter_map(|separator| {
             if !line.contains(separator) {
-                return None;
+                None
+            } else {
+                let parts = line.splitn(2, separator).collect::<Vec<&str>>();
+                Some(parts)
             }
-            let parts = line.splitn(2, separator).collect::<Vec<&str>>();
-            return Some(parts);
         })
         .collect();
     // splits will only have a single value depending on which hyphen it matched

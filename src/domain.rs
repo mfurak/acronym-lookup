@@ -55,16 +55,18 @@ pub fn lookup_acronym(
             let target_value = &target.value;
 
             if abbreviation.contains(target_value) {
-                return Some(AcronymResult {
+                Some(AcronymResult {
                     acronym: acronym.clone(),
-                });
+                })
+            } else {
+                None
             }
-            return None;
         })
         .collect::<Vec<AcronymResult>>();
 
     if results.is_empty() {
-        return None;
+        None
+    } else {
+        Some(results)
     }
-    return Some(results);
 }
