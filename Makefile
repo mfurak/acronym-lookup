@@ -6,3 +6,17 @@ install: detect-cargo
 
 fmt: detect-cargo
 	cargo fmt
+
+lint: detect-cargo
+	cargo clippy -- \
+	-W clippy::pedantic \
+	-W clippy::nursery \
+	-W clippy::unwrap_used \
+	-W clippy::expect_used
+
+lint-fix: detect-cargo
+	cargo clippy --fix -- \
+	-W clippy::pedantic \
+	-W clippy::nursery \
+	-W clippy::unwrap_used \
+	-W clippy::expect_used
