@@ -33,10 +33,7 @@ impl OutputFormat {
                 .replace(&target_acronym.value, &formatted_acronym);
             let formatted_definition =
                 format!("{ITALIC_START}{}{TEXT_END}", result.acronym.definition);
-            println!(
-                "{} - {ITALIC_START}{}{TEXT_END}",
-                formatted_acronym, formatted_definition
-            )
+            println!("{formatted_acronym} - {ITALIC_START}{formatted_definition}{TEXT_END}");
         }
     }
 
@@ -45,7 +42,7 @@ impl OutputFormat {
             println!(
                 "{} - {}",
                 result.acronym.abbreviation, result.acronym.definition
-            )
+            );
         }
     }
 

@@ -11,13 +11,13 @@ pub struct FetcherError {}
 
 impl From<reqwest::Error> for FetcherError {
     fn from(_: reqwest::Error) -> Self {
-        FetcherError {}
+        Self {}
     }
 }
 
 impl From<io::Error> for FetcherError {
     fn from(_: io::Error) -> Self {
-        FetcherError {}
+        Self {}
     }
 }
 
@@ -34,7 +34,7 @@ pub struct ConfluenceFetcher {
 
 impl ConfluenceFetcher {
     pub fn new(user_name: String, api_token: String, base_url: String, page_id: String) -> Self {
-        ConfluenceFetcher {
+        Self {
             config: ConfluenceFetcherConfig {
                 user_name,
                 api_token,
@@ -80,7 +80,7 @@ pub struct FileFetcher {
 
 impl FileFetcher {
     pub fn new(file_path: String) -> Self {
-        FileFetcher {
+        Self {
             config: FileFetcherConfig { file_path },
         }
     }

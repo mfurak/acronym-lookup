@@ -21,8 +21,9 @@ pub struct EnvParameters {
 }
 
 impl EnvParameters {
+    #[must_use]
     pub fn load() -> Self {
-        EnvParameters {
+        Self {
             confluence: ConfluenceEnvParameters {
                 user_name: std::env::var("AL_CONFLUENCE_USER_NAME")
                     .expect("AL_CONFLUENCE_USER_NAME is not set"),

@@ -8,7 +8,7 @@ pub struct KnownAcronym {
 
 impl KnownAcronym {
     pub fn new(abbreviation: &str, definition: &str) -> Self {
-        KnownAcronym {
+        Self {
             abbreviation: abbreviation.trim().to_uppercase(),
             definition: definition.trim().to_string(),
         }
@@ -21,7 +21,7 @@ pub struct TargetAcronym {
 
 impl TargetAcronym {
     pub fn new(value: &str) -> Self {
-        TargetAcronym {
+        Self {
             value: value.trim().to_uppercase(),
         }
     }

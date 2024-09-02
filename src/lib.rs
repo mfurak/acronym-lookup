@@ -37,8 +37,8 @@ pub fn run(cli_parameters: &CliParameters) {
             .unwrap()
             .iter()
             .for_each(|file_path| {
-                fetchers.push(Arc::new(Box::new(FileFetcher::new(file_path.clone()))))
-            })
+                fetchers.push(Arc::new(Box::new(FileFetcher::new(file_path.clone()))));
+            });
     }
 
     let handles = fetchers
