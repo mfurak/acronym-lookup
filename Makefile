@@ -1,3 +1,5 @@
+CLIPPY_FLAGS = -W clippy::pedantic -W clippy::nursery -W clippy::unwrap_used -W clippy::expect_used
+
 detect-cargo:
 	@which cargo || echo "Cargo(Rust package manager) is not installed"
 
@@ -8,15 +10,7 @@ fmt: detect-cargo
 	cargo fmt
 
 lint: detect-cargo
-	cargo clippy -- \
-	-W clippy::pedantic \
-	-W clippy::nursery \
-	-W clippy::unwrap_used \
-	-W clippy::expect_used
+	cargo clippy -- $(CLIPPY_FLAGS)
 
 lint-fix: detect-cargo
-	cargo clippy --fix -- \
-	-W clippy::pedantic \
-	-W clippy::nursery \
-	-W clippy::unwrap_used \
-	-W clippy::expect_used
+	cargo clippy --fix -- $(CLIPPY_FLAGS)
