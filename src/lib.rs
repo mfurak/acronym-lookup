@@ -2,10 +2,7 @@ use config::CliParameters;
 use domain::{lookup_acronym, KnownAcronym, TargetAcronym};
 use fetcher::{ConfluenceFetcher, Fetcher, FileFetcher};
 use output::{OutputFormat, OutputStyle};
-use std::{
-    sync::Arc,
-    thread::{self, JoinHandle},
-};
+use std::{sync::Arc, thread};
 
 pub mod config;
 mod domain;
@@ -41,16 +38,12 @@ pub fn run(cli_parameters: &CliParameters) {
             });
     }
 
-    let handles = fetchers
+    let known_acronyms = fetchers
         .iter()
         .map(|fetcher| {
             let thread_fetcher = Arc::clone(fetcher);
             thread::spawn(move || thread_fetcher.fetch().ok())
         })
-        .collect::<Vec<JoinHandle<Option<Vec<KnownAcronym>>>>>();
-
-    let known_acronyms = handles
-        .into_iter()
         .filter_map(|handle| handle.join().unwrap())
         .flatten()
         .collect::<Vec<KnownAcronym>>();
