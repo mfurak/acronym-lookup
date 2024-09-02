@@ -1,11 +1,11 @@
-use crate::output::OutputStyle;
+use crate::output;
 
 #[derive(clap::Parser)]
 #[command(version, about, long_about = None)]
 pub struct CliParameters {
     pub acronym: String,
     #[arg(short, long, value_enum)]
-    pub format: Option<OutputStyle>,
+    pub format: Option<output::Style>,
 }
 
 pub struct ConfluenceEnvParameters {
@@ -22,6 +22,7 @@ pub struct EnvParameters {
 
 impl EnvParameters {
     #[must_use]
+    /// # Panics
     pub fn load() -> Self {
         Self {
             confluence: ConfluenceEnvParameters {
@@ -34,27 +35,22 @@ impl EnvParameters {
                 page_id: std::env::var("AL_CONFLUENCE_PAGE_ID")
                     .expect("AL_CONFLUENCE_PAGE_ID is not set"),
             },
-            file_paths: match std::env::var("AL_FILE_PATHS") {
-                Ok(file_paths) => {
-                    if !file_paths.trim().is_empty() {
-                        Some(
-                            file_paths
-                                .split(',')
-                                .filter_map(|s| {
-                                    if !s.trim().is_empty() {
-                                        Some(s.to_owned())
-                                    } else {
-                                        None
-                                    }
-                                })
-                                .collect::<Vec<String>>(),
-                        )
-                    } else {
-                        None
-                    }
+            file_paths: std::env::var("AL_FILE_PATHS").map_or(None, |file_paths| {
+                if !file_paths.trim().is_empty() {
+                    return Some(
+                        file_paths
+                            .split(',')
+                            .filter_map(|s| {
+                                if !s.trim().is_empty() {
+                                    return Some(s.to_owned());
+                                }
+                                None
+                            })
+                            .collect::<Vec<String>>(),
+                    );
                 }
-                Err(_) => None,
-            },
+                None
+            }),
         }
     }
 }

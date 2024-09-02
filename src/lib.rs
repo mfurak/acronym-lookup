@@ -1,7 +1,4 @@
-use config::CliParameters;
 use domain::{lookup_acronym, KnownAcronym, TargetAcronym};
-use fetcher::{ConfluenceFetcher, Fetcher, FileFetcher};
-use output::{OutputFormat, OutputStyle};
 use std::{sync::Arc, thread};
 
 pub mod config;
@@ -9,19 +6,19 @@ mod domain;
 mod fetcher;
 mod output;
 
-pub fn run(cli_parameters: &CliParameters) {
+/// # Panics
+pub fn run(cli_parameters: &config::CliParameters) {
     let cli_acronym = &cli_parameters.acronym;
-    let cli_format = match cli_parameters.format {
-        Some(format) => format,
-        None => OutputStyle::Cli,
-    };
+    let cli_format = cli_parameters
+        .format
+        .map_or(output::Style::Cli, |format| format);
 
     let env_parameters = config::EnvParameters::load();
 
     let target_acronym = TargetAcronym::new(cli_acronym);
 
-    let mut fetchers: Vec<Arc<Box<dyn Fetcher + Sync>>> =
-        vec![Arc::new(Box::new(ConfluenceFetcher::new(
+    let mut fetchers: Vec<Arc<Box<dyn fetcher::Fetcher + Sync>>> =
+        vec![Arc::new(Box::new(fetcher::Confluence::new(
             env_parameters.confluence.user_name.clone(),
             env_parameters.confluence.api_token.clone(),
             env_parameters.confluence.base_url.clone(),
@@ -34,7 +31,7 @@ pub fn run(cli_parameters: &CliParameters) {
             .unwrap()
             .iter()
             .for_each(|file_path| {
-                fetchers.push(Arc::new(Box::new(FileFetcher::new(file_path.clone()))));
+                fetchers.push(Arc::new(Box::new(fetcher::File::new(file_path.clone()))));
             });
     }
 
@@ -48,10 +45,10 @@ pub fn run(cli_parameters: &CliParameters) {
         .flatten()
         .collect::<Vec<KnownAcronym>>();
 
-    let res = lookup_acronym(&target_acronym, known_acronyms);
+    let res = lookup_acronym(&target_acronym, &known_acronyms);
     match res {
         Some(results) => {
-            let output_format = OutputFormat { format: cli_format };
+            let output_format = output::Format { format: cli_format };
 
             output_format.print_output(&results, &target_acronym);
         }

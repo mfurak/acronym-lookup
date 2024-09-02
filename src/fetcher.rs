@@ -4,18 +4,18 @@ use std::{fs, io};
 const SEPARATORS: [&str; 4] = [" – ", " - ", " — ", " : "];
 
 pub trait Fetcher: Send + Sync {
-    fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError>;
+    fn fetch(&self) -> Result<Vec<KnownAcronym>, Error>;
 }
 
-pub struct FetcherError {}
+pub struct Error {}
 
-impl From<reqwest::Error> for FetcherError {
+impl From<reqwest::Error> for Error {
     fn from(_: reqwest::Error) -> Self {
         Self {}
     }
 }
 
-impl From<io::Error> for FetcherError {
+impl From<io::Error> for Error {
     fn from(_: io::Error) -> Self {
         Self {}
     }
@@ -28,12 +28,17 @@ struct ConfluenceFetcherConfig {
     page_id: String,
 }
 
-pub struct ConfluenceFetcher {
+pub struct Confluence {
     config: ConfluenceFetcherConfig,
 }
 
-impl ConfluenceFetcher {
-    pub fn new(user_name: String, api_token: String, base_url: String, page_id: String) -> Self {
+impl Confluence {
+    pub const fn new(
+        user_name: String,
+        api_token: String,
+        base_url: String,
+        page_id: String,
+    ) -> Self {
         Self {
             config: ConfluenceFetcherConfig {
                 user_name,
@@ -45,8 +50,8 @@ impl ConfluenceFetcher {
     }
 }
 
-impl Fetcher for ConfluenceFetcher {
-    fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError> {
+impl Fetcher for Confluence {
+    fn fetch(&self) -> Result<Vec<KnownAcronym>, Error> {
         let client = reqwest::blocking::Client::new();
         let url = format!(
             "{}/wiki/api/v2/pages/{}?body-format=view",
@@ -74,20 +79,20 @@ struct FileFetcherConfig {
     file_path: String,
 }
 
-pub struct FileFetcher {
+pub struct File {
     config: FileFetcherConfig,
 }
 
-impl FileFetcher {
-    pub fn new(file_path: String) -> Self {
+impl File {
+    pub const fn new(file_path: String) -> Self {
         Self {
             config: FileFetcherConfig { file_path },
         }
     }
 }
 
-impl Fetcher for FileFetcher {
-    fn fetch(&self) -> Result<Vec<KnownAcronym>, FetcherError> {
+impl Fetcher for File {
+    fn fetch(&self) -> Result<Vec<KnownAcronym>, Error> {
         let file_content = fs::read_to_string(&self.config.file_path)?;
         Ok(file_content
             .lines()
@@ -101,12 +106,11 @@ fn parse_acronym(line: &str) -> Option<KnownAcronym> {
     let splits: Vec<Vec<&str>> = SEPARATORS
         .iter()
         .filter_map(|separator| {
-            if !line.contains(separator) {
-                None
-            } else {
+            if line.contains(separator) {
                 let parts = line.splitn(2, separator).collect::<Vec<&str>>();
-                Some(parts)
+                return Some(parts);
             }
+            None
         })
         .collect();
     // splits will only have a single value depending on which hyphen it matched

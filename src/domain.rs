@@ -46,7 +46,7 @@ impl serde::Serialize for AcronymResult {
 
 pub fn lookup_acronym(
     target: &TargetAcronym,
-    known_acronyms: Vec<KnownAcronym>,
+    known_acronyms: &[KnownAcronym],
 ) -> Option<Vec<AcronymResult>> {
     let results = known_acronyms
         .iter()

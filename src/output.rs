@@ -5,26 +5,26 @@ const ITALIC_START: &str = "\x1B[3m";
 const TEXT_END: &str = "\x1B[0m";
 
 #[derive(Clone, Copy, clap::ValueEnum)]
-pub enum OutputStyle {
+pub enum Style {
     Cli,
     Text,
     Json,
 }
 
-pub struct OutputFormat {
-    pub format: OutputStyle,
+pub struct Format {
+    pub format: Style,
 }
 
-impl OutputFormat {
+impl Format {
     pub fn print_output(&self, results: &[AcronymResult], target_acronym: &TargetAcronym) {
         match self.format {
-            OutputStyle::Cli => self.print_cli(results, target_acronym),
-            OutputStyle::Text => self.print_text(results),
-            OutputStyle::Json => self.print_json(results),
+            Style::Cli => Self::print_cli(results, target_acronym),
+            Style::Text => Self::print_text(results),
+            Style::Json => Self::print_json(results),
         }
     }
 
-    fn print_cli(&self, results: &[AcronymResult], target_acronym: &TargetAcronym) {
+    fn print_cli(results: &[AcronymResult], target_acronym: &TargetAcronym) {
         for result in results {
             let formatted_acronym = format!("{BOLD_START}{}{TEXT_END}", target_acronym.value);
             let formatted_acronym = result
@@ -37,7 +37,7 @@ impl OutputFormat {
         }
     }
 
-    fn print_text(&self, results: &[AcronymResult]) {
+    fn print_text(results: &[AcronymResult]) {
         for result in results {
             println!(
                 "{} - {}",
@@ -46,8 +46,9 @@ impl OutputFormat {
         }
     }
 
-    fn print_json(&self, results: &[AcronymResult]) {
-        let output = serde_json::to_string(results).unwrap_or("Something went wrong".to_string());
+    fn print_json(results: &[AcronymResult]) {
+        let output =
+            serde_json::to_string(results).unwrap_or_else(|_| "Something went wrong".to_string());
         println!("{output}");
     }
 }
