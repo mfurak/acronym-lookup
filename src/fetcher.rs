@@ -58,7 +58,7 @@ impl Fetcher for Confluence {
             self.config.base_url, self.config.page_id
         );
         let response = client
-            .get(&url)
+            .get(url)
             .basic_auth(&self.config.user_name, Some(&self.config.api_token))
             .send()?;
         let json_body = response.json::<serde_json::Value>()?;
