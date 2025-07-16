@@ -1,4 +1,4 @@
-use domain::{lookup_acronym, KnownAcronym, TargetAcronym};
+use domain::{KnownAcronym, TargetAcronym, lookup_acronym};
 use std::{sync::Arc, thread};
 
 pub mod config;
