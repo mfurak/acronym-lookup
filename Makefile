@@ -18,3 +18,10 @@ lint: detect-cargo
 lf: lint-fix
 lint-fix: detect-cargo
 	cargo clippy --fix -- $(CLIPPY_FLAGS)
+
+install-upgrade:
+	cargo install cargo-edit
+
+u: upgrade
+upgrade: detect-cargo install-upgrade
+	cargo upgrade --incompatible
