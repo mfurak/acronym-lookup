@@ -3,14 +3,18 @@ CLIPPY_FLAGS = -W clippy::pedantic -W clippy::nursery -W clippy::unwrap_used -W 
 detect-cargo:
 	@which cargo || echo "Cargo(Rust package manager) is not installed"
 
+i: install
 install: detect-cargo
 	cargo install --path .
 
-fmt: detect-cargo
+f: format
+format: detect-cargo
 	cargo fmt
 
+l: lint
 lint: detect-cargo
 	cargo clippy -- $(CLIPPY_FLAGS)
 
+lf: lint-fix
 lint-fix: detect-cargo
 	cargo clippy --fix -- $(CLIPPY_FLAGS)
