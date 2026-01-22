@@ -25,14 +25,10 @@ pub fn run(cli_parameters: &config::CliParameters) {
             env_parameters.confluence.page_id.clone(),
         )))];
 
-    if env_parameters.file_paths.is_some() {
-        env_parameters
-            .file_paths
-            .unwrap()
-            .iter()
-            .for_each(|file_path| {
-                fetchers.push(Arc::new(Box::new(fetcher::File::new(file_path.clone()))));
-            });
+    if let Some(parameter_paths) = env_parameters.file_paths {
+        for file_path in parameter_paths.iter() {
+            fetchers.push(Arc::new(Box::new(fetcher::File::new(file_path.clone()))));
+        }
     }
 
     let known_acronyms = fetchers
