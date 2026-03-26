@@ -26,7 +26,7 @@ pub fn run(cli_parameters: &config::CliParameters) {
         )))];
 
     if let Some(parameter_paths) = env_parameters.file_paths {
-        for file_path in parameter_paths.iter() {
+        for file_path in &parameter_paths {
             fetchers.push(Arc::new(Box::new(fetcher::File::new(file_path.clone()))));
         }
     }
